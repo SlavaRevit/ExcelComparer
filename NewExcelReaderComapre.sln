@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewExcelReader", "NewExcelReader\NewExcelReader.csproj", "{CAEC3902-5C52-433E-B1A1-D0931658DB88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelWindow.WPF", "ExcelWindow.WPF\ExcelWindow.WPF.csproj", "{93BBC409-05BE-4922-AB22-E69C263F30D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelReader.Core", "ExcelReader.Core\ExcelReader.Core.csproj", "{62360B05-5265-4DCB-BECD-2A068A7C40B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAEC3902-5C52-433E-B1A1-D0931658DB88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAEC3902-5C52-433E-B1A1-D0931658DB88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAEC3902-5C52-433E-B1A1-D0931658DB88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAEC3902-5C52-433E-B1A1-D0931658DB88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93BBC409-05BE-4922-AB22-E69C263F30D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93BBC409-05BE-4922-AB22-E69C263F30D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93BBC409-05BE-4922-AB22-E69C263F30D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93BBC409-05BE-4922-AB22-E69C263F30D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62360B05-5265-4DCB-BECD-2A068A7C40B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62360B05-5265-4DCB-BECD-2A068A7C40B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62360B05-5265-4DCB-BECD-2A068A7C40B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62360B05-5265-4DCB-BECD-2A068A7C40B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
