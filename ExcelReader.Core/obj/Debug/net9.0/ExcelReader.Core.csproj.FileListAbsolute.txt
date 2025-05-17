@@ -22,3 +22,4 @@ E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Debug\net9.0\
 E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Debug\net9.0\refint\ExcelReader.Core.dll
 E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Debug\net9.0\ExcelReader.Core.pdb
 E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Debug\net9.0\ref\ExcelReader.Core.dll
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Debug\net9.0\ExcelReader.Core.sourcelink.json

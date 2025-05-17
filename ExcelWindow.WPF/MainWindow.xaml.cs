@@ -16,8 +16,6 @@ public partial class MainWindow
   private string _path1;
 
   private string _path2;
-
-  // private ExcelWorksheet _sheet1;
   private ExcelWorksheet _sheet2;
 
 
@@ -70,7 +68,6 @@ public partial class MainWindow
         return;
       }
 
-
       var selectedColumn = CompareKeyComboBox.SelectedItem as string ?? throw new InvalidOperationException();
 
       if (string.IsNullOrEmpty(selectedColumn))
@@ -85,14 +82,15 @@ public partial class MainWindow
       var data1 = new ExcelReader.Core.ExcelReader(_path1, headerStart1).Read(sheetFile1);
       var data2 = new ExcelReader.Core.ExcelReader(_path2, headerStart2).Read(_sheet2);
 
-      var comparer = new ExcelComparer(data1, data2);
+      var comparer = new ExcelComparerNewVersion(data1, data2);
       var diffs = comparer.Compare(selectedColumn);
-      ResultBlock.Text = $"Found {diffs.Count} differences.";
+
+      // ResultBlock.Text = $"Found {diffs.Count} differences.";
 
       var columnsData1 = data1.Columns.ToList();
       var columnsData2 = data2.Columns.ToList();
 
-      var styler = new ExcelStyleCells(_path1, headerFile1, sheetFile1, columnsData1, columnsData2);
+      var styler = new ExcelStyleCells(_path1, headerFile1, sheetFile1, columnsData1, columnsData2, comparer);
       styler.HighlightDifferences(diffs, selectedColumn);
 
       MessageBox.Show("Comparison done. File updated.");
@@ -110,13 +108,11 @@ public partial class MainWindow
   private void WorkSheetFile2_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
   {
     var selectedSheet = (ExcelWorksheet)WorkSheetFile2.SelectedItem;
-    if (selectedSheet != null)
-    {
-      _sheet2 = selectedSheet;
-      var headerStart2 = int.TryParse(HeaderFile2Index.Text, out var headerFile2) ? headerFile2 : 1;
-      var columns = ExcelReader.Core.ExcelReader
-        .ReadDataAboutColumnInFile(_path2, selectedSheet, headerStart2);
-      CompareKeyComboBox.ItemsSource = columns;
-    }
+    if (selectedSheet == null) return;
+    _sheet2 = selectedSheet;
+    var headerStart2 = int.TryParse(HeaderFile2Index.Text, out var headerFile2) ? headerFile2 : 1;
+    var columns = ExcelReader.Core.ExcelReader
+      .ReadDataAboutColumnInFile(_path2, selectedSheet, headerStart2);
+    CompareKeyComboBox.ItemsSource = columns;
   }
 }

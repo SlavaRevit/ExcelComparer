@@ -4,28 +4,25 @@ namespace ExcelReader.Core;
 
 public class ExcelComparer : IExcelCompare
 {
-  private readonly ExcelData _data1;
-  private readonly ExcelData _data2;
+  private readonly ExcelData _originalFile;
+  private readonly ExcelData _compareToFile;
 
-  public ExcelComparer(ExcelData data1, ExcelData data2)
+  public ExcelComparer(ExcelData originalFile, ExcelData compareToFile)
   {
-    _data1 = data1;
-    _data2 = data2;
+    _originalFile = originalFile;
+    _compareToFile = compareToFile;
   }
   
   public List<CellDifference> Compare(string columnName)
   {
-    var originalFileRows = _data1.GetRowsByKey(columnName);
-    var compareToFileRows = _data2.GetRowsByKey(columnName);
+    var originalFileRows = _originalFile.GetRowsByKey(columnName);
+    var compareToFileRows = _compareToFile.GetRowsByKey(columnName);
 
     var diffs = new List<CellDifference>();
     // maybe we need to return new dictionary of elements already sorted and compared between each other ?
-    
 
     foreach (var key in compareToFileRows.Keys)
     {
-      // var isKeyInRows1 = rows1.TryGetValue(key, out var value);
-      // Console.WriteLine($"is key in rows1: {isKeyInRows1} value: {value}");
       var isExistedInOriginalFile = originalFileRows.TryGetValue(key, out var rowOfOriginalFile);
       var compareToFileRow = compareToFileRows[key];
       var insertAfterIndex = -1;
@@ -33,28 +30,28 @@ public class ExcelComparer : IExcelCompare
       if (!isExistedInOriginalFile)
       {
         //index of element in file 2 that not present in file 1
-        var indexInData2 = _data2.Rows
+        var indexInData2 = _compareToFile.Rows
           .FindIndex(r => r.GetKey(columnName) == key);
 
         //here I go backward from index that exists in both files
         for (var i = indexInData2 - 1; i >= 0; i--)
         {
-          var prevKey = _data2.Rows[i].GetKey(columnName);
+          var prevKey = _compareToFile.Rows[i].GetKey(columnName);
           if (prevKey != null && originalFileRows.ContainsKey(prevKey))
           {
             // Find this row's index in _data1
-            insertAfterIndex = _data1.Rows
+            insertAfterIndex = _originalFile.Rows
               .FindIndex(r => r.GetKey(columnName) == prevKey);
             break;
           }
         }
       }
 
-      _data1.AddRow(compareToFileRow);
+      _originalFile.AddRow(compareToFileRow);
 
-      foreach (var column in _data2.Columns)
+      foreach (var column in _compareToFile.Columns)
       {
-        if (!_data1.Columns.Contains(column))
+        if (!_originalFile.Columns.Contains(column))
           continue;
 
         var value1 = isExistedInOriginalFile ? rowOfOriginalFile?.GetAtColumn(column) : null;
@@ -67,7 +64,7 @@ public class ExcelComparer : IExcelCompare
             OldValue = value1,
             NewValue = value2,
             isNewRow = !isExistedInOriginalFile,
-            PreviousKey = insertAfterIndex != -1 ? _data1.Rows[insertAfterIndex].GetKey(columnName) : null
+            PreviousKey = insertAfterIndex != -1 ? _originalFile.Rows[insertAfterIndex].GetKey(columnName) : null
           });
       }
     }
@@ -79,9 +76,9 @@ public class ExcelComparer : IExcelCompare
       if (!compareToFileRows.ContainsKey(key))
       {
         var row1 = originalFileRows[key];
-        foreach (var column in _data1.Columns)
+        foreach (var column in _originalFile.Columns)
         {
-          if (!_data2.Columns.Contains(column))
+          if (!_compareToFile.Columns.Contains(column))
             continue;
     
           var value1 = row1.GetAtColumn(column);

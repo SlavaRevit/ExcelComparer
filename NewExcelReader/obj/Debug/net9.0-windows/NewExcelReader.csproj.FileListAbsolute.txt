@@ -72,3 +72,4 @@ E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\obj\Debug\net9.0-wi
 E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\obj\Debug\net9.0-windows\NewExcelReader.pdb
 E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\obj\Debug\net9.0-windows\NewExcelReader.genruntimeconfig.cache
 E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\obj\Debug\net9.0-windows\ref\NewExcelReader.dll
+E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\obj\Debug\net9.0-windows\NewExcelReader.sourcelink.json
