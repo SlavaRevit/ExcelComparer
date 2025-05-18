@@ -1,0 +1,13 @@
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\bin\Release\net9.0\ExcelReader.Core.deps.json
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\bin\Release\net9.0\ExcelReader.Core.dll
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\bin\Release\net9.0\ExcelReader.Core.pdb
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ExcelReader.Core.csproj.AssemblyReference.cache
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ExcelReader.Core.GeneratedMSBuildEditorConfig.editorconfig
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ExcelReader.Core.AssemblyInfoInputs.cache
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ExcelReader.Core.AssemblyInfo.cs
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ExcelReader.Core.csproj.CoreCompileInputs.cache
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ExcelReader.Core.sourcelink.json
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ExcelReader.Core.dll
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\refint\ExcelReader.Core.dll
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ExcelReader.Core.pdb
+E:\4.Learning\myProject\NewExcelReaderComapre\ExcelReader.Core\obj\Release\net9.0\ref\ExcelReader.Core.dll

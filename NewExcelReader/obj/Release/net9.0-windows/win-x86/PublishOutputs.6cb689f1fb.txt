@@ -1,0 +1,5 @@
+E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\bin\Release\net9.0-windows\win-x86\publish\NewExcelReader.pdb
+E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\bin\Release\net9.0-windows\win-x86\publish\ExcelWindow.WPF.runtimeconfig.json
+E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\bin\Release\net9.0-windows\win-x86\publish\ExcelWindow.WPF.pdb
+E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\bin\Release\net9.0-windows\win-x86\publish\ExcelReader.Core.pdb
+E:\4.Learning\myProject\NewExcelReaderComapre\NewExcelReader\bin\Release\net9.0-windows\win-x86\publish\NewExcelReader.exe

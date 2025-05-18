@@ -90,7 +90,7 @@ public partial class MainWindow
       var columnsData1 = data1.Columns.ToList();
       var columnsData2 = data2.Columns.ToList();
 
-      var styler = new ExcelStyleCells(_path1, headerFile1, sheetFile1, columnsData1, columnsData2, comparer);
+      var styler = new ExcelStyleCells(_path1, headerFile1, sheetFile1, columnsData1, columnsData2, comparer, selectedColumn);
       styler.HighlightDifferences(diffs, selectedColumn);
 
       MessageBox.Show("Comparison done. File updated.");

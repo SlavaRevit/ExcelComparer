@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ExcelWindow"
         mc:Ignorable="d"
         FontFamily="Arial"
-        Title="MainWindow" Height="320" Width="650">
+        Title="ExcelComparer" Height="320" Width="650">
     <Grid Margin="15">
         <Grid.Resources>
             <!-- Set a common width for all labels -->

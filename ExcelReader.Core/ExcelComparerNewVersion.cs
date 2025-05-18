@@ -161,15 +161,14 @@ public class ExcelComparerNewVersion : IExcelCompareNew
       var isNum1 = int.TryParse(part1, out var num1);
       var isNum2 = int.TryParse(part2, out var num2);
 
-      if (isNum1 && isNum2)
-      {
-        if (num1 != num2) return num1.CompareTo(num2);
-      }
-      else
-      {
-        var result = string.Compare(part1, part2, StringComparison.OrdinalIgnoreCase);
-        if (result != 0) return result;
-      }
+      if (!isNum1 || !isNum2) continue;
+      if (num1 != num2) return num1.CompareTo(num2);
+      // else
+      // {
+      //   // var result = string.Compare(part1, part2, StringComparison.OrdinalIgnoreCase);
+      //   // if (result != 0) return result;
+      //   continue;
+      // }
     }
 
     return 0;

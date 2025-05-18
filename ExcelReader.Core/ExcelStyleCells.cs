@@ -7,15 +7,15 @@ namespace ExcelReader.Core;
 public class ExcelStyleCells
 {
   private const string HighlightColorHexCell = "#f2c5e9";
-  private const string HighlightColorHexLine = "#7091ff";
-  private const string HighlightColorHexWasInFirstFile = "#a3a3a3";
+  private const string HighlightColorHexLine = "#95b1ff";
+  private const string HighlightColorHexWasInFirstFile = "#d4d4d4";
   private readonly List<string> _columns1;
   private readonly List<string> _columns2;
   private readonly string _filePath;
   private readonly int _headerStart;
   private ExcelWorksheet _worksheet;
   private readonly ExcelComparerNewVersion _comparer;
-
+  private string _selectedColumn;
 
   public ExcelStyleCells(
     string filePath,
@@ -23,8 +23,7 @@ public class ExcelStyleCells
     ExcelWorksheet worksheet,
     List<string> columns1,
     List<string> columns2,
-    ExcelComparerNewVersion comparer
-  )
+    ExcelComparerNewVersion comparer, string selectedColumn)
   {
     _filePath = filePath;
     _headerStart = headerStart;
@@ -32,6 +31,7 @@ public class ExcelStyleCells
     _columns1 = columns1;
     _columns2 = columns2;
     _comparer = comparer;
+    _selectedColumn = selectedColumn;
   }
 
   public void HighlightDifferences(List<CellDifferenceNew> differences, string rowKeyColumn)
@@ -65,7 +65,7 @@ public class ExcelStyleCells
         rowIndex = prevRowIndex + 1 + offset;
 
         _worksheet.InsertRow(rowIndex, 1);
-        
+
         // Fill values for changed cells
         foreach (var diff in cellDiffs)
         {
@@ -73,7 +73,7 @@ public class ExcelStyleCells
           var cell = _worksheet.Cells[rowIndex, colIndex];
           cell.Value = diff.NewValue;
         }
-        
+
         for (var i = 0; i <= _columns1.Count - 1; i++)
         {
           var colName = _columns1[i];
@@ -108,21 +108,19 @@ public class ExcelStyleCells
           cell.Value = diff.NewValue;
         }
 
-        for (var i = 0; i <= _columns1.Count - 1; i++)
-        {
-          var colName = _columns1[i];
-          var colIndex = _comparer.GetColumnIndexByName(_worksheet, colName, _headerStart);
-          var cell = _worksheet.Cells[rowIndex, colIndex];
-          
-          var bg = cell.Style.Fill.BackgroundColor;
-          if (bg.Rgb != null)
-          {
-            cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-            cell.Style.Fill.BackgroundColor.SetAuto();
-          }
+        var indexOfSelectedColumn = _comparer.GetColumnIndexByName(_worksheet, _selectedColumn, _headerStart);
+        var selectedColumnCell = _worksheet.Cells[rowIndex, indexOfSelectedColumn];
 
-          CellNewValueHighlight(cell, HighlightColorHexWasInFirstFile);
-        }
+        // var bg = selectedColumnCell.Style.Fill.BackgroundColor;
+        // var border = selectedColumnCell.Style.Border;
+        // if (bg.Rgb is not null || border is not null)
+        // {
+        //   
+        //   selectedColumnCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+        //   selectedColumnCell.Style.Fill.BackgroundColor.SetAuto();
+        // }
+
+        CellNewValueHighlight(selectedColumnCell, HighlightColorHexWasInFirstFile);
       }
 
       else
@@ -148,7 +146,7 @@ public class ExcelStyleCells
   {
     cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
     cell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(color));
-    cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
+    // cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
     cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
   }
 }

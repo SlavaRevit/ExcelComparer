@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ExcelReader.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0d12ac826bdf23daf2fb8fc151578663f215d7de")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+99a62a40cceda22320dfa26a176f319819eabbcc")]
 [assembly: System.Reflection.AssemblyProductAttribute("ExcelReader.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ExcelReader.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
