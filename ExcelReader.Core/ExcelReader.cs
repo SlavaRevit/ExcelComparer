@@ -35,13 +35,8 @@ public class ExcelReader : IExcelReader
     {
       var rowData = new Dictionary<string, object>();
       string columnName = null;
-      // Get key cell value (e.g., in column 1)
-      // var keyCell = workSheet.Cells[row, 1];
-      // var keyValue = keyCell.Text?.Trim();
-      
       for (var col = 1; col <= columnsCount; col++)
       {
-        var cell = worksheet.Cells[row, col];
         columnName = columnNames[col - 1];
         var cellValue = GetCellValueWithFullPrecision(worksheet.Cells[row, col]);
         rowData[columnName] = cellValue;
@@ -77,7 +72,6 @@ public class ExcelReader : IExcelReader
   // Helper method to get cell value with full precision
   public static object GetCellValueWithFullPrecision(ExcelRange cell)
   {
-    
     if (cell.Value == null) return null;
     
     if (cell.Value is double doubleValue)
@@ -94,7 +88,7 @@ public class ExcelReader : IExcelReader
     {
       return dateValue;
     }
-
+    
     return cell.Value;
   }
 }

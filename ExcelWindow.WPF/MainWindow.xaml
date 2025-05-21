@@ -24,6 +24,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Row 0: Original File -->
@@ -71,12 +72,21 @@
                 />
         </StackPanel>
 
-        <!-- Row 5: Compare Button -->
-        <Button Grid.Row="5" Content="Compare and Highlight" Height="40" Margin="0 10 0 0" Click="Compare_Click"/>
+        <!-- Row 5: Column to compare -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="0 5">
+            <TextBlock Text="Mark items from file1 ?:"/>
+            <CheckBox x:Name="boolResult" Width="50" Margin="10 0" HorizontalAlignment="Left"/>            
+            <TextBlock Text="Mark changed cell? :"/>
+            <CheckBox x:Name="boolResultMark" Width="50" Margin="10 0" HorizontalAlignment="Left"/>
+        </StackPanel>
 
-        <!-- Row 6: Result -->
+
+        <!-- Row 6: Compare Button -->
+        <Button Grid.Row="6" Content="Compare and Highlight" Height="40" Margin="0 10 0 0" Click="Compare_Click"/>
+
+        <!-- Row 7: Result -->
         <TextBlock x:Name="ResultBlock"
-                   Grid.Row="6"
+                   Grid.Row="7"
                    Margin="0 10"
                    Foreground="Green"
                    FontWeight="Bold"/>

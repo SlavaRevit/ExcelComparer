@@ -14,24 +14,31 @@ public class ExcelStyleCells
   private readonly string _filePath;
   private readonly int _headerStart;
   private ExcelWorksheet _worksheet;
-  private readonly ExcelComparerNewVersion _comparer;
+  private readonly ExcelHelperMethods _excelHelper;
   private string _selectedColumn;
+  private readonly bool? _isChecked;
+  private readonly bool? _isMarkCell;
 
   public ExcelStyleCells(
     string filePath,
     int headerStart,
     ExcelWorksheet worksheet,
     List<string> columns1,
-    List<string> columns2,
-    ExcelComparerNewVersion comparer, string selectedColumn)
+    List<string> columns2, 
+    string selectedColumn,
+    bool? isChecked,
+    bool? isMarkCell
+    )
   {
     _filePath = filePath;
     _headerStart = headerStart;
     _worksheet = worksheet;
     _columns1 = columns1;
     _columns2 = columns2;
-    _comparer = comparer;
     _selectedColumn = selectedColumn;
+    _isChecked = isChecked;
+    _isMarkCell = isMarkCell;
+    _excelHelper = new ExcelHelperMethods();
   }
 
   public void HighlightDifferences(List<CellDifferenceNew> differences, string rowKeyColumn)
@@ -46,7 +53,7 @@ public class ExcelStyleCells
 
     // Track how many rows we've inserted after each existing key
     var insertOffsetMap = new Dictionary<string, int>();
-    var keyToExcelRow = _comparer.MapKeysToRowIndices(_worksheet, rowKeyColumn, _headerStart);
+    var keyToExcelRow = _excelHelper.MapKeysToRowIndices(_worksheet, rowKeyColumn, _headerStart);
 
     foreach (var (rowKey, cellDiffs) in groupedDiffs)
     {
@@ -57,6 +64,7 @@ public class ExcelStyleCells
       {
         // Use the comparer to find the previous key
         var prevKey = firstDiff.PreviousKey;
+        
         if (string.IsNullOrEmpty(prevKey) || !keyToExcelRow.TryGetValue(prevKey, out var prevRowIndex))
           continue;
 
@@ -69,7 +77,7 @@ public class ExcelStyleCells
         // Fill values for changed cells
         foreach (var diff in cellDiffs)
         {
-          var colIndex = _comparer.GetColumnIndexByName(_worksheet, diff.ColumnName, _headerStart);
+          var colIndex = _excelHelper.GetColumnIndexByName(_worksheet, diff.ColumnName, _headerStart);
           var cell = _worksheet.Cells[rowIndex, colIndex];
           cell.Value = diff.NewValue;
         }
@@ -77,7 +85,7 @@ public class ExcelStyleCells
         for (var i = 0; i <= _columns1.Count - 1; i++)
         {
           var colName = _columns1[i];
-          var colIndex = _comparer.GetColumnIndexByName(_worksheet, colName, _headerStart);
+          var colIndex = _excelHelper.GetColumnIndexByName(_worksheet, colName, _headerStart);
           var cell = _worksheet.Cells[rowIndex, colIndex];
 
           CellNewValueHighlight(cell, HighlightColorHexLine);
@@ -98,43 +106,43 @@ public class ExcelStyleCells
 
       else if (firstDiff.IsWasInFile1)
       {
-        rowIndex = _comparer.GetRowIndexByKey(_worksheet, rowKeyColumn, rowKey, _headerStart);
+        rowIndex = _excelHelper.GetRowIndexByKey(_worksheet, rowKeyColumn, rowKey, _headerStart);
         if (rowIndex == -1) continue;
 
         foreach (var diff in cellDiffs)
         {
-          var colIndex = _comparer.GetColumnIndexByName(_worksheet, diff.ColumnName, _headerStart);
+          var colIndex = _excelHelper.GetColumnIndexByName(_worksheet, diff.ColumnName, _headerStart);
           var cell = _worksheet.Cells[rowIndex, colIndex];
-          cell.Value = diff.NewValue;
+          cell.Value = diff.OldValue;
         }
 
-        var indexOfSelectedColumn = _comparer.GetColumnIndexByName(_worksheet, _selectedColumn, _headerStart);
+        var indexOfSelectedColumn = _excelHelper.GetColumnIndexByName(_worksheet, _selectedColumn, _headerStart);
         var selectedColumnCell = _worksheet.Cells[rowIndex, indexOfSelectedColumn];
 
-        // var bg = selectedColumnCell.Style.Fill.BackgroundColor;
-        // var border = selectedColumnCell.Style.Border;
-        // if (bg.Rgb is not null || border is not null)
-        // {
-        //   
-        //   selectedColumnCell.Style.Fill.PatternType = ExcelFillStyle.Solid;
-        //   selectedColumnCell.Style.Fill.BackgroundColor.SetAuto();
-        // }
-
-        CellNewValueHighlight(selectedColumnCell, HighlightColorHexWasInFirstFile);
+        if (_isChecked.HasValue && _isChecked.Value)
+        {
+          CellNewValueHighlight(selectedColumnCell, HighlightColorHexWasInFirstFile);  
+        }
       }
 
       else
       {
-        rowIndex = _comparer.GetRowIndexByKey(_worksheet, rowKeyColumn, rowKey, _headerStart);
+        rowIndex = _excelHelper.GetRowIndexByKey(_worksheet, rowKeyColumn, rowKey, _headerStart);
         if (rowIndex == -1) continue;
 
         foreach (var diff in cellDiffs)
         {
           if (diff.IsNewRow || diff.IsWasInFile1) continue;
-          var colIndex = _comparer.GetColumnIndexByName(_worksheet, diff.ColumnName, _headerStart);
+          var colIndex = _excelHelper.GetColumnIndexByName(_worksheet, diff.ColumnName, _headerStart);
           var cell = _worksheet.Cells[rowIndex, colIndex];
           cell.Value = diff.NewValue;
-          CellNewValueHighlight(cell, HighlightColorHexCell);
+
+          if (_isMarkCell.HasValue && _isMarkCell.Value)
+          {
+            CellNewValueHighlight(cell, HighlightColorHexCell);
+          }
+          
+          // cell.Style.Numberformat.Format = "0";
         }
       }
     }
@@ -144,9 +152,17 @@ public class ExcelStyleCells
 
   public void CellNewValueHighlight(ExcelRange cell, string color)
   {
+
     cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
+    cell.Style.Fill.BackgroundColor.SetAuto();
     cell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(color));
-    // cell.Style.Border.BorderAround(ExcelBorderStyle.Thin);
     cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+    
+    // Optional: Set number format to 1 digit after the dot (e.g., 12.3)
+    if (double.TryParse(cell.Value?.ToString(), out _))
+    {
+      cell.Style.Numberformat.Format = "0";
+    }
+    
   }
 }

@@ -1,4 +1,6 @@
-﻿using ExcelReader.Core.Interfaces;
+﻿using System.Globalization;
+using System.Net.Http.Headers;
+using ExcelReader.Core.Interfaces;
 using OfficeOpenXml;
 
 namespace ExcelReader.Core;
@@ -7,29 +9,54 @@ public class ExcelComparerNewVersion : IExcelCompareNew
 {
   private readonly ExcelData _originalFile;
   private readonly ExcelData _compareToFile;
+  private readonly List<string> _columnData1;
+  private readonly List<string> _columnData2;
+  private readonly ExcelHelperMethods _excelHelper;
 
-  public ExcelComparerNewVersion(ExcelData originalFile, ExcelData compareToFile)
+
+  public ExcelComparerNewVersion(
+    ExcelData originalFile,
+    ExcelData compareToFile,
+    List<string> dataColumns1,
+    List<string> dataColumns2)
   {
     _originalFile = originalFile;
     _compareToFile = compareToFile;
+    _columnData1 = dataColumns1;
+    _columnData2 = dataColumns2;
+    _excelHelper = new ExcelHelperMethods();
   }
 
   public List<CellDifferenceNew> Compare(string columnName)
   {
-    var originalFileRows = _originalFile.GetRowsByKey(columnName);
-    var compareToFileRows = _compareToFile.GetRowsByKey(columnName);
+    var originalRaw = _originalFile.GetRowsByKey(columnName);
+    var compareRaw = _compareToFile.GetRowsByKey(columnName);
+
+    // Normalized maps
+    // var originalFileRows = originalRaw.ToDictionary(
+    //   kvp => _excelHelper.NormalizeKey(kvp.Key),
+    //   kvp => kvp.Value
+    // );
+
+    // var compareToFileRows = compareRaw.ToDictionary(
+    //   kvp => _excelHelper.NormalizeKey(kvp.Key),
+    //   kvp => kvp.Value
+    // );
 
     var diffs = new List<CellDifferenceNew>();
 
-    foreach (var key in compareToFileRows.Keys)
+    foreach (var key in compareRaw.Keys)
     {
-      var isExistedInOriginalFile = originalFileRows.TryGetValue(key, out var rowOfOriginalFile);
-
-      // new row
-      if (!isExistedInOriginalFile)
+      var isExistedInOriginalFile = originalRaw
+        .TryGetValue(key, out var rowOfOriginalFile);
+      
+      var prevKey = _excelHelper
+        .FindPreviousKey(key, originalRaw.Keys.ToList());
+      
+      
+      if (!isExistedInOriginalFile && prevKey is not null)
       {
-        var prevKey = FindPreviousKey(key, originalFileRows.Keys.ToList());
-        var rowInCompareFile = compareToFileRows[key];
+        var rowInCompareFile = compareRaw[key];
 
         // Process all columns for this new row
         foreach (var column in _compareToFile.Columns)
@@ -50,6 +77,34 @@ public class ExcelComparerNewVersion : IExcelCompareNew
           });
         }
       }
+
+      if (!isExistedInOriginalFile && prevKey is null)
+      {
+        var rowInCompareFile = compareRaw[key];
+        var newKey = _excelHelper
+          .FindPreviousKeyNormalized(key, originalRaw.Keys.ToList());
+
+        // Process all columns for this new row
+        foreach (var column in _compareToFile.Columns)
+        {
+          if (!_originalFile.Columns.Contains(column))
+            continue;
+
+          var value2 = rowInCompareFile.GetAtColumn(column);
+
+          diffs.Add(new CellDifferenceNew
+          {
+            RowKey = key,
+            ColumnName = column,
+            OldValue = null,
+            NewValue = value2,
+            IsNewRow = true,
+            PreviousKey = newKey,
+            IsWasInFile1 = false
+          });
+        }
+      }
+
       //handle existing row with potential modifications.
       else
       {
@@ -58,10 +113,11 @@ public class ExcelComparerNewVersion : IExcelCompareNew
           if (!_originalFile.Columns.Contains(column))
             continue;
 
+          var rowInCompareFile = compareRaw[key];
           var value1 = rowOfOriginalFile?.GetAtColumn(column);
-          var value2 = compareToFileRows[key].GetAtColumn(column);
+          var value2 = rowInCompareFile?.GetAtColumn(column);
 
-          if (!AreValuesEqual(value2, value1))
+          if (!_excelHelper.AreValuesEqual(value2, value1))
             diffs.Add(new CellDifferenceNew
             {
               RowKey = key,
@@ -77,17 +133,16 @@ public class ExcelComparerNewVersion : IExcelCompareNew
     }
 
     // 2. Detect rows that were in file 1 but not in file 2 (deleted rows)
-    foreach (var key in originalFileRows.Keys)
+    foreach (var key in originalRaw.Keys)
     {
-      if (!compareToFileRows.ContainsKey(key))
+      if (!compareRaw.ContainsKey(key))
       {
-        var row1 = originalFileRows[key];
         foreach (var column in _originalFile.Columns)
         {
           if (!_compareToFile.Columns.Contains(column))
             continue;
 
-          var value1 = row1.GetAtColumn(column);
+          var value1 = originalRaw[key]?.GetAtColumn(column);
           diffs.Add(new CellDifferenceNew
           {
             RowKey = key,
@@ -101,116 +156,9 @@ public class ExcelComparerNewVersion : IExcelCompareNew
         }
       }
     }
+    // }
 
     return diffs;
-  }
-
-  public Dictionary<string, int> MapKeysToRowIndices(
-    ExcelWorksheet worksheet,
-    string keyColumnName,
-    int headerStart)
-  {
-    var keyToExcelRow = new Dictionary<string, int>();
-    try
-    {
-      var keyColumnIndex = GetColumnIndexByName(worksheet, keyColumnName, headerStart);
-
-      for (var row = headerStart + 1; row <= worksheet.Dimension.End.Row; row++)
-      {
-        var key = worksheet.Cells[row, keyColumnIndex].Text.Trim();
-        if (!string.IsNullOrEmpty(key) && !keyToExcelRow.ContainsKey(key))
-          keyToExcelRow[key] = row;
-      }
-    }
-    catch (Exception err)
-    {
-      Console.WriteLine($"Error mapping keys to row indices: {err.Message}");
-    }
-
-    return keyToExcelRow;
-  }
-
-  private string Normalize(object val)
-  {
-    if (val == null) return string.Empty;
-
-    var str = val.ToString().Trim()
-      .Replace("\u00A0", " ")
-      .Replace("\r", "")
-      .Replace("\n", "");
-
-    return str == "0" || string.IsNullOrWhiteSpace(str) ? string.Empty : str;
-  }
-
-  private bool AreValuesEqual(object v1, object v2)
-  {
-    return Normalize(v1) == Normalize(v2);
-  }
-
-  public int CompareKeys(string key1, string key2)
-  {
-    var parts1 = key1.Split('.');
-    var parts2 = key2.Split('.');
-    var len = Math.Max(parts1.Length, parts2.Length);
-
-    for (var i = 0; i < len; i++)
-    {
-      var part1 = i < parts1.Length ? parts1[i] : "0";
-      var part2 = i < parts2.Length ? parts2[i] : "0";
-
-      var isNum1 = int.TryParse(part1, out var num1);
-      var isNum2 = int.TryParse(part2, out var num2);
-
-      if (!isNum1 || !isNum2) continue;
-      if (num1 != num2) return num1.CompareTo(num2);
-      // else
-      // {
-      //   // var result = string.Compare(part1, part2, StringComparison.OrdinalIgnoreCase);
-      //   // if (result != 0) return result;
-      //   continue;
-      // }
-    }
-
-    return 0;
-  }
-
-  public string? FindPreviousKey(string newKey, List<string> existingKeys)
-  {
-    string? previousKey = null;
-
-    for (var i = 0; i < existingKeys.Count - 1; i++)
-    {
-      var current = existingKeys[i];
-      var next = existingKeys[i + 1];
-      
-      if (CompareKeys(current, newKey) < 0 && CompareKeys(newKey, next) < 0)
-        return current;
-    }
-    
-    
-    if (CompareKeys(newKey, existingKeys.Last()) > 0)
-      return existingKeys.Last();
-
-    return previousKey;
-  }
-
-  public int GetColumnIndexByName(ExcelWorksheet worksheet, string columnName, int headerStart)
-  {
-    for (var col = 1; col <= worksheet.Dimension.End.Column; col++)
-      if (worksheet.Cells[headerStart, col].Text.Trim() == columnName)
-        return col;
-    
-    throw new Exception($"column {columnName} not found.");
-  }
-
-  public int GetRowIndexByKey(ExcelWorksheet worksheet, string columnName, string keyValue, int headerStart)
-  {
-    var keyColumnIndex = GetColumnIndexByName(worksheet, columnName, headerStart);
-    for (var row = headerStart + 1; row <= worksheet.Dimension.End.Row; row++)
-      if (worksheet.Cells[row, keyColumnIndex].Text.Trim() == keyValue)
-        return row;
-
-    return -1;
   }
 }
 

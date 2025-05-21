@@ -81,16 +81,29 @@ public partial class MainWindow
 
       var data1 = new ExcelReader.Core.ExcelReader(_path1, headerStart1).Read(sheetFile1);
       var data2 = new ExcelReader.Core.ExcelReader(_path2, headerStart2).Read(_sheet2);
+      
+      
+      var columnsData1 = data1.Columns.ToList();
+      var columnsData2 = data2.Columns.ToList();
 
-      var comparer = new ExcelComparerNewVersion(data1, data2);
+      var comparer = new ExcelComparerNewVersion(data1, data2, columnsData1, columnsData2);
       var diffs = comparer.Compare(selectedColumn);
 
       // ResultBlock.Text = $"Found {diffs.Count} differences.";
 
-      var columnsData1 = data1.Columns.ToList();
-      var columnsData2 = data2.Columns.ToList();
 
-      var styler = new ExcelStyleCells(_path1, headerFile1, sheetFile1, columnsData1, columnsData2, comparer, selectedColumn);
+      var isChecked = boolResult.IsChecked;
+      var isMarkCell = boolResultMark.IsChecked;
+      
+      var styler = new ExcelStyleCells(_path1,
+        headerFile1,
+        sheetFile1,
+        columnsData1,
+        columnsData2,
+        selectedColumn,
+        isChecked,
+        isMarkCell
+        );
       styler.HighlightDifferences(diffs, selectedColumn);
 
       MessageBox.Show("Comparison done. File updated.");
