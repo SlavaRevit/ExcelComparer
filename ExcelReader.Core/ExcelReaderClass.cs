@@ -3,19 +3,9 @@ using OfficeOpenXml;
 
 namespace ExcelReader.Core;
 
-public class ExcelReader : IExcelReader
+public class ExcelReaderClass : IExcelReader
 {
-  private readonly ExcelPackage _excelReader;
-  private readonly int _headerIndexStart;
-
-
-  public ExcelReader(string filePath, int headerIndexStart)
-  {
-    _headerIndexStart = headerIndexStart;
-    _excelReader = new ExcelPackage(new FileInfo(filePath));
-  }
-
-  public ExcelData Read(ExcelWorksheet worksheet)
+  public ExcelData Read(ExcelWorksheet worksheet, int headerIndexStart)
   {
     worksheet.View.RightToLeft = true;
 
@@ -25,16 +15,16 @@ public class ExcelReader : IExcelReader
     var columnNames = new List<string>();
     for (var col = 1; col <= columnsCount; col++)
     {
-      var headerValue = worksheet.Cells[_headerIndexStart, col].Text?.Trim() ?? $"Column-{col}";
+      var headerValue = worksheet.Cells[headerIndexStart, col].Text?.Trim() ?? $"Column-{col}";
       columnNames.Add(headerValue);
     }
 
     var resultedRows = new List<Row>();
 
-    for (var row = _headerIndexStart + 1; row <= rowCount; row++)
+    for (var row = headerIndexStart + 1; row <= rowCount; row++)
     {
       var rowData = new Dictionary<string, object>();
-      string columnName = null;
+      string columnName;
       for (var col = 1; col <= columnsCount; col++)
       {
         columnName = columnNames[col - 1];

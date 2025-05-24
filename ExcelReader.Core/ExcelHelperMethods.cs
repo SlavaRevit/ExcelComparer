@@ -10,16 +10,14 @@ public class ExcelHelperMethods
     var normalizedParts = new List<string>();
   
     // Preserve all parts as-is except the last one
-    for (int i = 0; i < parts.Length; i++)
+    for (var i = 0; i < parts.Length; i++)
     {
       if (i == parts.Length - 1)
       {
-        // Last part: remove leading zeros if it's numeric
         if (int.TryParse(parts[i], out int num))
         {
           if (num != 0)
             normalizedParts.Add(num.ToString());
-          // If the last part is zero, we skip adding it
         }
         else
         {
@@ -28,7 +26,6 @@ public class ExcelHelperMethods
       }
       else
       {
-        // Keep original (including leading zeros)
         normalizedParts.Add(parts[i]);
       }
     }
@@ -60,13 +57,6 @@ public class ExcelHelperMethods
         var compare = string.Compare(part1, part2, StringComparison.OrdinalIgnoreCase);
         if (compare != 0) return compare;
       }
-      // if (!isNum1 || !isNum2) continue;
-      // if (num1 != num2) return num1.CompareTo(num2);
-      // else
-      // {
-      // var result = string.Compare(part1, part2, StringComparison.OrdinalIgnoreCase);
-      // if (result != 0) return result;
-      // }
     }
 
     return 0;
@@ -178,5 +168,4 @@ public class ExcelHelperMethods
 
     return keyToExcelRow;
   }
-  
 }

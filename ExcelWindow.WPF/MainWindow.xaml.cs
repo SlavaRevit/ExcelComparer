@@ -8,29 +8,26 @@ using OfficeOpenXml;
 
 namespace ExcelWindow;
 
-/// <summary>
-///   Interaction logic for MainWindow.xaml
-/// </summary>
 public partial class MainWindow
 {
-  private string _path1;
-
-  private string _path2;
-  private ExcelWorksheet _sheet2;
-
+  private string? _path1;
+  private string? _path2;
+  private ExcelWorksheet? _sheet2;
+  private readonly ExcelReaderClass _readerClass;
 
   public MainWindow()
   {
     InitializeComponent();
     ExcelPackage.License.SetNonCommercialOrganization("My Noncommercial organization");
     Console.OutputEncoding = Encoding.UTF8;
+    _readerClass = new ExcelReaderClass();
   }
 
   private void BrowseFile1_Click(object sender, RoutedEventArgs e)
   {
     FilePath1Box.Text = SelectExcelFile();
     _path1 = FilePath1Box.Text;
-    var worksheets = ExcelReader.Core.ExcelReader.ReadDataAboutExcelFile(_path1);
+    var worksheets = ExcelReaderClass.ReadDataAboutExcelFile(_path1);
     WorkSheetFile1.ItemsSource = worksheets;
   }
 
@@ -39,14 +36,16 @@ public partial class MainWindow
     FilePath2Box.Text = SelectExcelFile();
     _path2 = FilePath2Box.Text;
 
-    var worksheets = ExcelReader.Core.ExcelReader.ReadDataAboutExcelFile(_path2);
+    var worksheets = ExcelReaderClass.ReadDataAboutExcelFile(_path2);
     WorkSheetFile2.ItemsSource = worksheets;
   }
 
   private string SelectExcelFile()
   {
-    var dialog = new OpenFileDialog();
-    dialog.Filter = "Excel Files (*.xlsx)|*.xlsx";
+    var dialog = new OpenFileDialog
+    {
+      Filter = "Excel Files (*.xlsx)|*.xlsx"
+    };
     return dialog.ShowDialog() == true ? dialog.FileName : string.Empty;
   }
 
@@ -79,31 +78,25 @@ public partial class MainWindow
       var headerStart1 = int.TryParse(HeaderFile1Index.Text, out var headerFile1) ? headerFile1 : 1;
       var headerStart2 = int.TryParse(HeaderFile2Index.Text, out var headerFile2) ? headerFile2 : 1;
 
-      var data1 = new ExcelReader.Core.ExcelReader(_path1, headerStart1).Read(sheetFile1);
-      var data2 = new ExcelReader.Core.ExcelReader(_path2, headerStart2).Read(_sheet2);
-      
-      
+      var data1 = _readerClass.Read(sheetFile1, headerStart1);
+      var data2 = _readerClass.Read(_sheet2!, headerStart2);
+
       var columnsData1 = data1.Columns.ToList();
-      var columnsData2 = data2.Columns.ToList();
 
-      var comparer = new ExcelComparerNewVersion(data1, data2, columnsData1, columnsData2);
+      var comparer = new ExcelComparerNewVersion(data1, data2);
       var diffs = comparer.Compare(selectedColumn);
-
-      // ResultBlock.Text = $"Found {diffs.Count} differences.";
-
 
       var isChecked = boolResult.IsChecked;
       var isMarkCell = boolResultMark.IsChecked;
-      
+
       var styler = new ExcelStyleCells(_path1,
         headerFile1,
         sheetFile1,
         columnsData1,
-        columnsData2,
         selectedColumn,
         isChecked,
         isMarkCell
-        );
+      );
       styler.HighlightDifferences(diffs, selectedColumn);
 
       MessageBox.Show("Comparison done. File updated.");
@@ -124,8 +117,7 @@ public partial class MainWindow
     if (selectedSheet == null) return;
     _sheet2 = selectedSheet;
     var headerStart2 = int.TryParse(HeaderFile2Index.Text, out var headerFile2) ? headerFile2 : 1;
-    var columns = ExcelReader.Core.ExcelReader
-      .ReadDataAboutColumnInFile(_path2, selectedSheet, headerStart2);
+    var columns = ExcelReaderClass.ReadDataAboutColumnInFile(_path2!, selectedSheet, headerStart2);
     CompareKeyComboBox.ItemsSource = columns;
   }
 }

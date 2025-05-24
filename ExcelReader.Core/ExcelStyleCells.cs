@@ -10,12 +10,11 @@ public class ExcelStyleCells
   private const string HighlightColorHexLine = "#95b1ff";
   private const string HighlightColorHexWasInFirstFile = "#d4d4d4";
   private readonly List<string> _columns1;
-  private readonly List<string> _columns2;
   private readonly string _filePath;
   private readonly int _headerStart;
   private ExcelWorksheet _worksheet;
   private readonly ExcelHelperMethods _excelHelper;
-  private string _selectedColumn;
+  private readonly string _selectedColumn;
   private readonly bool? _isChecked;
   private readonly bool? _isMarkCell;
 
@@ -24,17 +23,15 @@ public class ExcelStyleCells
     int headerStart,
     ExcelWorksheet worksheet,
     List<string> columns1,
-    List<string> columns2, 
     string selectedColumn,
     bool? isChecked,
     bool? isMarkCell
-    )
+  )
   {
     _filePath = filePath;
     _headerStart = headerStart;
     _worksheet = worksheet;
     _columns1 = columns1;
-    _columns2 = columns2;
     _selectedColumn = selectedColumn;
     _isChecked = isChecked;
     _isMarkCell = isMarkCell;
@@ -62,9 +59,8 @@ public class ExcelStyleCells
 
       if (firstDiff.IsNewRow)
       {
-        // Use the comparer to find the previous key
         var prevKey = firstDiff.PreviousKey;
-        
+
         if (string.IsNullOrEmpty(prevKey) || !keyToExcelRow.TryGetValue(prevKey, out var prevRowIndex))
           continue;
 
@@ -74,7 +70,6 @@ public class ExcelStyleCells
 
         _worksheet.InsertRow(rowIndex, 1);
 
-        // Fill values for changed cells
         foreach (var diff in cellDiffs)
         {
           var colIndex = _excelHelper.GetColumnIndexByName(_worksheet, diff.ColumnName, _headerStart);
@@ -121,7 +116,7 @@ public class ExcelStyleCells
 
         if (_isChecked.HasValue && _isChecked.Value)
         {
-          CellNewValueHighlight(selectedColumnCell, HighlightColorHexWasInFirstFile);  
+          CellNewValueHighlight(selectedColumnCell, HighlightColorHexWasInFirstFile);
         }
       }
 
@@ -141,8 +136,8 @@ public class ExcelStyleCells
           {
             CellNewValueHighlight(cell, HighlightColorHexCell);
           }
-          
-          // cell.Style.Numberformat.Format = "0";
+
+          cell.Style.Numberformat.Format = "0";
         }
       }
     }
@@ -152,17 +147,14 @@ public class ExcelStyleCells
 
   public void CellNewValueHighlight(ExcelRange cell, string color)
   {
-
     cell.Style.Fill.PatternType = ExcelFillStyle.Solid;
     cell.Style.Fill.BackgroundColor.SetAuto();
     cell.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml(color));
     cell.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
     
-    // Optional: Set number format to 1 digit after the dot (e.g., 12.3)
     if (double.TryParse(cell.Value?.ToString(), out _))
     {
       cell.Style.Numberformat.Format = "0";
     }
-    
   }
 }

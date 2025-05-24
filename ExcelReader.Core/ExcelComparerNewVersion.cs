@@ -9,21 +9,16 @@ public class ExcelComparerNewVersion : IExcelCompareNew
 {
   private readonly ExcelData _originalFile;
   private readonly ExcelData _compareToFile;
-  private readonly List<string> _columnData1;
-  private readonly List<string> _columnData2;
   private readonly ExcelHelperMethods _excelHelper;
 
 
   public ExcelComparerNewVersion(
     ExcelData originalFile,
-    ExcelData compareToFile,
-    List<string> dataColumns1,
-    List<string> dataColumns2)
+    ExcelData compareToFile
+    )
   {
     _originalFile = originalFile;
     _compareToFile = compareToFile;
-    _columnData1 = dataColumns1;
-    _columnData2 = dataColumns2;
     _excelHelper = new ExcelHelperMethods();
   }
 
@@ -31,17 +26,6 @@ public class ExcelComparerNewVersion : IExcelCompareNew
   {
     var originalRaw = _originalFile.GetRowsByKey(columnName);
     var compareRaw = _compareToFile.GetRowsByKey(columnName);
-
-    // Normalized maps
-    // var originalFileRows = originalRaw.ToDictionary(
-    //   kvp => _excelHelper.NormalizeKey(kvp.Key),
-    //   kvp => kvp.Value
-    // );
-
-    // var compareToFileRows = compareRaw.ToDictionary(
-    //   kvp => _excelHelper.NormalizeKey(kvp.Key),
-    //   kvp => kvp.Value
-    // );
 
     var diffs = new List<CellDifferenceNew>();
 
