@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System.Net.Http.Headers;
-using ExcelReader.Core.Interfaces;
-using OfficeOpenXml;
+﻿using ExcelReader.Core.Interfaces;
 
 namespace ExcelReader.Core;
 
@@ -37,18 +34,14 @@ public class ExcelComparerNewVersion : IExcelCompareNew
       var prevKey = _excelHelper
         .FindPreviousKey(key, originalRaw.Keys.ToList());
       
-      
       if (!isExistedInOriginalFile && prevKey is not null)
       {
-        var rowInCompareFile = compareRaw[key];
-
-        // Process all columns for this new row
         foreach (var column in _compareToFile.Columns)
         {
           if (!_originalFile.Columns.Contains(column))
             continue;
 
-          var value2 = rowInCompareFile.GetAtColumn(column);
+          var value2 = compareRaw[key].GetAtColumn(column);
           diffs.Add(new CellDifferenceNew
           {
             RowKey = key,
@@ -67,8 +60,7 @@ public class ExcelComparerNewVersion : IExcelCompareNew
         var rowInCompareFile = compareRaw[key];
         var newKey = _excelHelper
           .FindPreviousKeyNormalized(key, originalRaw.Keys.ToList());
-
-        // Process all columns for this new row
+        
         foreach (var column in _compareToFile.Columns)
         {
           if (!_originalFile.Columns.Contains(column))
@@ -97,10 +89,11 @@ public class ExcelComparerNewVersion : IExcelCompareNew
           if (!_originalFile.Columns.Contains(column))
             continue;
 
-          var rowInCompareFile = compareRaw[key];
-          var value1 = rowOfOriginalFile?.GetAtColumn(column);
-          var value2 = rowInCompareFile?.GetAtColumn(column);
-
+          if (rowOfOriginalFile is null) continue;
+          
+          var value1 = rowOfOriginalFile.GetAtColumn(column);
+          var value2 = compareRaw[key].GetAtColumn(column);
+          
           if (!_excelHelper.AreValuesEqual(value2, value1))
             diffs.Add(new CellDifferenceNew
             {
@@ -126,7 +119,7 @@ public class ExcelComparerNewVersion : IExcelCompareNew
           if (!_compareToFile.Columns.Contains(column))
             continue;
 
-          var value1 = originalRaw[key]?.GetAtColumn(column);
+          var value1 = originalRaw[key].GetAtColumn(column);
           diffs.Add(new CellDifferenceNew
           {
             RowKey = key,
@@ -148,11 +141,11 @@ public class ExcelComparerNewVersion : IExcelCompareNew
 
 public class CellDifferenceNew
 {
-  public string RowKey { get; set; }
-  public string ColumnName { get; set; }
-  public object OldValue { get; set; }
-  public object NewValue { get; set; }
+  public string? RowKey { get; set; }
+  public string? ColumnName { get; set; }
+  public object? OldValue { get; set; }
+  public object? NewValue { get; set; }
   public bool IsNewRow { get; set; }
-  public string PreviousKey { get; set; }
+  public string? PreviousKey { get; set; }
   public bool IsWasInFile1 { get; set; }
 }

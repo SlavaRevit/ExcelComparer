@@ -6,9 +6,9 @@ namespace ExcelReader.Core;
 
 public class ExcelStyleCells
 {
-  private const string HighlightColorHexCell = "#f2c5e9";
-  private const string HighlightColorHexLine = "#95b1ff";
-  private const string HighlightColorHexWasInFirstFile = "#d4d4d4";
+  private const string HighlightColorHexCell = "#d1a6ff";
+  private const string HighlightColorHexLine = "#a6ffd0";
+  private const string HighlightColorHexWasInFirstFile = "#86eb4b";
   private readonly List<string> _columns1;
   private readonly string _filePath;
   private readonly int _headerStart;

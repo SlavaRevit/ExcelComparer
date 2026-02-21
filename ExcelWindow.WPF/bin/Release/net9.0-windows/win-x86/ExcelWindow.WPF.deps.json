@@ -11,7 +11,7 @@
         "dependencies": {
           "EPPlus": "8.0.3",
           "ExcelReader.Core": "1.0.0",
-          "Microsoft.NET.ILLink.Tasks": "9.0.4"
+          "Microsoft.NET.ILLink.Tasks": "9.0.6"
         },
         "runtime": {
           "ExcelWindow.WPF.dll": {}
@@ -142,7 +142,7 @@
           }
         }
       },
-      "Microsoft.NET.ILLink.Tasks/9.0.4": {},
+      "Microsoft.NET.ILLink.Tasks/9.0.6": {},
       "System.ComponentModel.Annotations/5.0.0": {},
       "System.Security.Cryptography.Pkcs/9.0.3": {
         "runtime": {
@@ -260,12 +260,12 @@
       "path": "microsoft.io.recyclablememorystream/3.0.1",
       "hashPath": "microsoft.io.recyclablememorystream.3.0.1.nupkg.sha512"
     },
-    "Microsoft.NET.ILLink.Tasks/9.0.4": {
+    "Microsoft.NET.ILLink.Tasks/9.0.6": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-xUdlUxiFwXhTYhB4VxKg/IA0+jlZXJPo70LYuMryWbJHdonIpZjw+7DO2B0pWwpXIOs6MlH5WVXPEtfrGEcVZA==",
-      "path": "microsoft.net.illink.tasks/9.0.4",
-      "hashPath": "microsoft.net.illink.tasks.9.0.4.nupkg.sha512"
+      "sha512": "sha512-TXy3SbJzGXQbxxIxCjdrp8bwEyTDImyYNpTpd6v7P3JL2Y7dno8EYG7dPezfYTa5SoWKdhbH9cbnwHHs3BR5gA==",
+      "path": "microsoft.net.illink.tasks/9.0.6",
+      "hashPath": "microsoft.net.illink.tasks.9.0.6.nupkg.sha512"
     },
     "System.ComponentModel.Annotations/5.0.0": {
       "type": "package",

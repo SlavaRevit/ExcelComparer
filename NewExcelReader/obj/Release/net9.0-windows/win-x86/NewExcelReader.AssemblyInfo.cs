@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NewExcelReader")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a76b3701cf54de296bde805235d99a5259eca71c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+43070d5f0b2b5c1b17006ce2eef45522630db5dc")]
 [assembly: System.Reflection.AssemblyProductAttribute("NewExcelReader")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NewExcelReader")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -100,12 +100,11 @@ public class ExcelHelperMethods
   }
   
   
-  
   public string Normalize(object val)
   {
     if (val == null) return string.Empty;
-
-    var str = val.ToString().Trim()
+    var str = val.ToString()?
+      .Trim()
       .Replace("\u00A0", " ")
       .Replace("\r", "")
       .Replace("\n", "");
